@@ -1,0 +1,20 @@
+{
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "npm start"
+  },
+  "events": {
+  },
+  "watch": [
+    "routes/"
+  ],
+  "env": {
+    "NODE_ENV": "development",
+    "DEBUG": "wind-api:*"
+  },
+  "ext": "js json"
+}
