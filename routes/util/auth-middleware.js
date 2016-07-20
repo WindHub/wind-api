@@ -1,9 +1,25 @@
 const jwt = require('jsonwebtoken');
+const Step = require('step');
+
+const pi = require('../pi');
 const config = require('../../config');
+const redis = require('../services').Redis;
 
 module.exports = function(req, res, next) {
-  if (req.cookies.authorization) {
-    jwt.verify(req.cookies.authorization, config.jwt.secret, function(err, decoded) {
+  Step(
+    function() {
+      if (req.cookies.authorization) {
+        jwt.verify(req.cookies.authorization, config.jwt.secret, this);
+      } else {
+        res
+          .status(401)
+          .json({
+            code: 401.2,
+            message: "not logged in"
+          });
+      }
+    },
+    function(err, decoded) {
       if (err) {
         if (err.name == "TokenExpiredError") {
           res
@@ -30,16 +46,22 @@ module.exports = function(req, res, next) {
             });
         } else {
           req.auth = decoded;
-          next();
+          pi.checkAuth(decoded.jti, this);
         }
       }
-    });
-  } else {
-    res
-      .status(401)
-      .json({
-        code: 401.2,
-        message: "not logged in"
-      });
-  }
+    },
+    function(err, result) {
+      if (err) throw err;
+      if (result) {
+        next();
+      } else {
+        res
+          .status(401)
+          .json({
+            code: 401.7,
+            message: "parent token expired"
+          });
+      }
+    }
+  );
 };

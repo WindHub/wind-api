@@ -5,5 +5,9 @@ const config = require('../../config');
 mongoose.connect(config.db.mongo);
 
 module.exports = _.merge(
-  require('./user')
+  require('./user'),
+  require('./permission'),
+  require('./problem'),
+  require('./contest'),
+  require('./judge')
 );
