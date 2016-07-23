@@ -28,7 +28,8 @@ module.exports = function(req, res) {
           httpOnly: true,
           domain: config.api_url,
           path: '/',
-          secure: config.secure
+          secure: config.secure,
+          expires: new Date(__exp * 1000)
         })
         .json({});
     }
